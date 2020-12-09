@@ -1,4 +1,7 @@
 /* game board table */
+/* body {
+  background-color: rgb(15, 113, 165);
+} */
 
 #board td {
   width: 50px;
