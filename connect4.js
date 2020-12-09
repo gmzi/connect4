@@ -43,7 +43,6 @@ function makeHtmlBoard() {
     headCell.setAttribute('id', x);
     top.append(headCell);
   }
-  htmlBoard.append(top);
 
   // TODO: add comment for this code
   // loop creates row:
@@ -52,11 +51,21 @@ function makeHtmlBoard() {
     // loop create cells inside row:
     for (let x = 0; x < WIDTH; x++) {
       const cell = document.createElement('td');
+      const circle = document.createElement('div');
+      circle.classList.add('piece');
+      if (board[y][x] === 1) {
+        circle.classList.add('p1');
+        cell.appendChild(circle);
+      } else if (board[y][x] === 2) {
+        circle.classList.add('p2');
+        cell.appendChild(circle);
+      }
       cell.setAttribute('id', `${y}-${x}`);
       row.append(cell);
     }
     // append row with cells to board:
-    htmlBoard.append(row);
+    htmlBoard.prepend(row);
+    htmlBoard.prepend(top);
   }
 }
 
@@ -71,25 +80,41 @@ function findSpotForCol(x) {
 
 function placeInTable(y, x) {
   // TODO: make a div and insert into correct table cell
-  console.log(x);
-  console.log(y);
-  const allTds = document.querySelectorAll('#board td');
-  const td = document.getElementById(`5-${x}`);
-  const placeDiv = document.createElement('div');
-  placeDiv.classList.add('piece');
-  placeDiv.classList.add('p1');
-  for (let i = 0; i < allTds.length; i++) {
-    if (allTds[i].innerHTML.includes('p1')) {
-      placeDiv.classList.remove('p1');
-      placeDiv.classList.add('p2');
-    }
-    if (allTds[i].innerHTML.includes('p2')) {
-      placeDiv.classList.remove('p2');
-      placeDiv.classList.add('p1');
-    }
+  // console.log(x);
+  // console.log(y);
+  
+  // const allTds = document.querySelectorAll('#board td');
+  // const td = document.getElementById(`5-${x}`);
+  // const placeDiv = document.createElement('div');
+  // placeDiv.classList.add('piece');
+  // placeDiv.classList.add('p1');
+  // for (let i = 0; i < allTds.length; i++) {
+  //   if (allTds[i].innerHTML.includes('p1')) {
+  //     placeDiv.classList.remove('p1');
+  //     placeDiv.classList.add('p2');
+  //   }
+  //   if (allTds[i].innerHTML.includes('p2')) {
+  //     placeDiv.classList.remove('p2');
+  //     placeDiv.classList.add('p1');
+  //   }
+  // }
+  // td.append(placeDiv);
+
+  while (board[y][x] != null && y < board.length-1) {
+    y++;
   }
-  console.log(td);
-  td.append(placeDiv);
+
+  if (y >= board.length) {
+    // y is out of bounds
+    return;
+  }
+
+  board[y][x] = currPlayer;
+  currPlayer = currPlayer === 1 ? 2 : 1; 
+  console.log(board);
+  const htmlBoard = document.querySelector('#board');
+  htmlBoard.innerHTML = '';
+  makeHtmlBoard();
 }
 
 /** endGame: announce game end */
