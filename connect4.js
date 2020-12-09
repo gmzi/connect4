@@ -88,7 +88,6 @@ function placeInTable(y, x) {
       placeDiv.classList.add('p1');
     }
   }
-  placeDiv.innerText = 'caca';
   console.log(td);
   td.append(placeDiv);
 }
