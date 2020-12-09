@@ -16,7 +16,7 @@ let board = []; // array of rows, each row is array of cells  (board[y][x])
  */
 
 function makeBoard() {
-  // TODO: set "board" to empty HEIGHT x WIDTH matrix array
+  // [DONE!!!] TODO: set "board" to empty HEIGHT x WIDTH matrix array
   for (let i = 0; i < HEIGHT; i++) {
     board[i] = [null];
     for (let j = 0; j < WIDTH; j++) {
@@ -29,9 +29,9 @@ function makeBoard() {
 /** makeHtmlBoard: make HTML table and row of column tops. */
 
 function makeHtmlBoard() {
-  // TODO: get "htmlBoard" variable from the item in HTML w/ID of "board"
+  // [DONE!!!] TODO: get "htmlBoard" variable from the item in HTML w/ID of "board"
   const htmlBoard = document.querySelector('#board');
-  // TODO: add comment for this code
+  //[DONE!!!] TODO: add comment for this code
   // creates top row with id and adds click listener
   const top = document.createElement('tr');
   top.setAttribute('id', 'column-top');
@@ -45,7 +45,7 @@ function makeHtmlBoard() {
   }
   htmlBoard.append(top);
 
-  // TODO: add comment for this code
+  //[DONE!!!] TODO: add comment for this code
   // loop creates row:
   for (let y = 0; y < HEIGHT; y++) {
     const row = document.createElement('tr');
@@ -63,39 +63,39 @@ function makeHtmlBoard() {
 /** findSpotForCol: given column x, return top empty y (null if filled) */
 
 function findSpotForCol(x) {
-  // TODO: write the real version of this, rather than always returning 0
-  return 0;
+  // [DONE!!!]TODO: write the real version of this, rather than always returning 0
+  let y = HEIGHT - 1;
+  while (board[y][x] !== null) {
+    y--;
+    if (y < 0) {
+      return null;
+    }
+  }
+  return y;
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
 
 function placeInTable(y, x) {
-  // TODO: make a div and insert into correct table cell
-  console.log(x);
-  console.log(y);
-  const allTds = document.querySelectorAll('#board td');
-  const td = document.getElementById(`5-${x}`);
+  // [DONE!!!]TODO: make a div and insert into correct table cell
+  const td = document.getElementById(`${y}-${x}`);
   const placeDiv = document.createElement('div');
   placeDiv.classList.add('piece');
-  placeDiv.classList.add('p1');
-  for (let i = 0; i < allTds.length; i++) {
-    if (allTds[i].innerHTML.includes('p1')) {
-      placeDiv.classList.remove('p1');
-      placeDiv.classList.add('p2');
-    }
-    if (allTds[i].innerHTML.includes('p2')) {
-      placeDiv.classList.remove('p2');
-      placeDiv.classList.add('p1');
-    }
+
+  if (currPlayer === 1) {
+    placeDiv.classList.add('p1');
+  } else if (currPlayer === 2) {
+    placeDiv.classList.add('p2');
   }
-  console.log(td);
+
   td.append(placeDiv);
 }
 
 /** endGame: announce game end */
 
 function endGame(msg) {
-  // TODO: pop up alert message
+  //[DONE!!!]TODO: pop up alert message
+  alert(msg);
 }
 
 /** handleClick: handle click of column top to play piece */
@@ -103,26 +103,33 @@ function endGame(msg) {
 function handleClick(evt) {
   // get x from ID of clicked cell
   let x = +evt.target.id;
-
   // get next spot in column (if none, ignore click)
-  const y = findSpotForCol(x);
+  let y = findSpotForCol(x);
   if (y === null) {
     return;
   }
   // place piece in board and add to HTML table
-  // TODO: add line to update in-memory board
+  // [DONE!!!]TODO: add line to update in-memory board
   placeInTable(y, x);
-
+  board[y][x] = currPlayer;
   // check for win
   if (checkForWin()) {
     return endGame(`Player ${currPlayer} won!`);
   }
 
   // check for tie
-  // TODO: check if all cells in board are filled; if so call, call endGame
-
+  //[DONE!!!]TODO: check if all cells in board are filled; if so call, call endGame
+  function boardFilled(board) {
+    return board.every(function (val, index) {
+      return val[index] !== null;
+    });
+  }
+  if (boardFilled(board)) {
+    endGame(`It's a tie`);
+  }
   // switch players
-  // TODO: switch currPlayer 1 <-> 2
+  // [DONE!!!]TODO: switch currPlayer 1 <-> 2
+  currPlayer = currPlayer === 1 ? 2 : 1;
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
