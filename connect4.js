@@ -1,3 +1,7 @@
+/* QUESTIONS: 
+1- where's the click listener for the top column?
+2 - Where
+
 /** Connect Four
  *
  * Player 1 and 2 alternate turns. On each turn, a piece is dropped down a
@@ -185,6 +189,13 @@ function checkForWin() {
     }
   }
 }
+
+// BUTTON
+const btn = document.querySelector('#button');
+
+btn.addEventListener('click', function (e) {
+  window.location.reload();
+});
 
 makeBoard();
 makeHtmlBoard();
