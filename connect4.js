@@ -14,6 +14,7 @@ const HEIGHT = 6;
 
 let currPlayer = 1; // active player: 1 or 2
 let board = []; // array of rows, each row is array of cells  (board[y][x])
+let gameEnded = false;
 
 /** makeBoard: create in-JS board structure:
  *    board = array of rows, each row is array of cells  (board[y][x])
@@ -99,41 +100,46 @@ function placeInTable(y, x) {
 
 function endGame(msg) {
   //[DONE!!!]TODO: pop up alert message
-  alert(msg);
+  setTimeout(function () {
+    alert(msg);
+  }, 1);
+  gameEnded = true;
 }
 
 /** handleClick: handle click of column top to play piece */
 
 function handleClick(evt) {
-  // get x from ID of clicked cell
-  let x = +evt.target.id;
-  // get next spot in column (if none, ignore click)
-  let y = findSpotForCol(x);
-  if (y === null) {
-    return;
-  }
-  // place piece in board and add to HTML table
-  // [DONE!!!]TODO: add line to update in-memory board
-  placeInTable(y, x);
-  board[y][x] = currPlayer;
-  // check for win
-  if (checkForWin()) {
-    return endGame(`Player ${currPlayer} won!`);
-  }
+  if (!gameEnded) {
+    // get x from ID of clicked cell
+    let x = +evt.target.id;
+    // get next spot in column (if none, ignore click)
+    let y = findSpotForCol(x);
+    if (y === null) {
+      return;
+    }
+    // place piece in board and add to HTML table
+    // [DONE!!!]TODO: add line to update in-memory board
+    placeInTable(y, x);
+    board[y][x] = currPlayer;
+    // check for win
+    if (checkForWin()) {
+      return endGame(`Player ${currPlayer} won!`);
+    }
 
-  // check for tie
-  //[DONE!!!]TODO: check if all cells in board are filled; if so call, call endGame
-  function boardFilled(board) {
-    return board.every(function (val, index) {
-      return val[index] !== null;
-    });
+    // check for tie
+    //[DONE!!!]TODO: check if all cells in board are filled; if so call, call endGame
+    function boardFilled(board) {
+      return board.every(function (val, index) {
+        return val[index] !== null;
+      });
+    }
+    if (boardFilled(board)) {
+      endGame(`It's a tie`);
+    }
+    // switch players
+    // [DONE!!!]TODO: switch currPlayer 1 <-> 2
+    currPlayer = currPlayer === 1 ? 2 : 1;
   }
-  if (boardFilled(board)) {
-    endGame(`It's a tie`);
-  }
-  // switch players
-  // [DONE!!!]TODO: switch currPlayer 1 <-> 2
-  currPlayer = currPlayer === 1 ? 2 : 1;
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
@@ -191,11 +197,13 @@ function checkForWin() {
 }
 
 // BUTTON
-const btn = document.querySelector('#button');
-
-btn.addEventListener('click', function (e) {
-  window.location.reload();
-});
+function addReplayButton() {
+  const btn = document.querySelector('#button');
+  btn.addEventListener('click', function (e) {
+    window.location.reload();
+  });
+}
 
 makeBoard();
 makeHtmlBoard();
+addReplayButton();

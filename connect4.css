@@ -40,13 +40,12 @@ body {
 }
 
 #button-div {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  margin-top: 1.5rem;
+  display: block;
+  width: inherit;
+  margin: 1.5rem 0rem;
 }
 #button {
-  width: 60%;
+  text-indent: initial;
   border: none;
   border-radius: 5px;
   background-color: rgb(207, 240, 207);
