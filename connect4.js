@@ -1,7 +1,3 @@
-/* QUESTIONS: 
-1- where's the click listener for the top column?
-2 - Where
-
 /** Connect Four
  *
  * Player 1 and 2 alternate turns. On each turn, a piece is dropped down a
@@ -14,132 +10,106 @@ const HEIGHT = 6;
 
 let currPlayer = 1; // active player: 1 or 2
 let board = []; // array of rows, each row is array of cells  (board[y][x])
-let gameEnded = false;
 
 /** makeBoard: create in-JS board structure:
- *    board = array of rows, each row is array of cells  (board[y][x])
+ *   board = array of rows, each row is array of cells  (board[y][x])
  */
 
 function makeBoard() {
-  // [DONE!!!] TODO: set "board" to empty HEIGHT x WIDTH matrix array
-  for (let i = 0; i < HEIGHT; i++) {
-    board[i] = [null];
-    for (let j = 0; j < WIDTH; j++) {
-      board[i][j] = null;
-    }
+  for (let y = 0; y < HEIGHT; y++) {
+    board.push(Array.from({ length: WIDTH }));
   }
-  return board;
 }
 
 /** makeHtmlBoard: make HTML table and row of column tops. */
 
 function makeHtmlBoard() {
-  // [DONE!!!] TODO: get "htmlBoard" variable from the item in HTML w/ID of "board"
-  const htmlBoard = document.querySelector('#board');
-  //[DONE!!!] TODO: add comment for this code
-  // creates top row with id and adds click listener
+  const board = document.getElementById('board');
+
+  // make column tops (clickable area for adding a piece to that column)
   const top = document.createElement('tr');
   top.setAttribute('id', 'column-top');
   top.addEventListener('click', handleClick);
 
-  // loop creates each td (cell) of column-top, sets id as loop index and appends it to row
   for (let x = 0; x < WIDTH; x++) {
     const headCell = document.createElement('td');
     headCell.setAttribute('id', x);
     top.append(headCell);
   }
-  htmlBoard.append(top);
 
-  //[DONE!!!] TODO: add comment for this code
-  // loop creates row:
+  board.append(top);
+
+  // make main part of board
   for (let y = 0; y < HEIGHT; y++) {
     const row = document.createElement('tr');
-    // loop create cells inside row:
+
     for (let x = 0; x < WIDTH; x++) {
       const cell = document.createElement('td');
       cell.setAttribute('id', `${y}-${x}`);
       row.append(cell);
     }
-    // append row with cells to board:
-    htmlBoard.append(row);
+
+    board.append(row);
   }
 }
 
 /** findSpotForCol: given column x, return top empty y (null if filled) */
 
 function findSpotForCol(x) {
-  // [DONE!!!]TODO: write the real version of this, rather than always returning 0
-  let y = HEIGHT - 1;
-  while (board[y][x] !== null) {
-    y--;
-    if (y < 0) {
-      return null;
+  for (let y = HEIGHT - 1; y >= 0; y--) {
+    if (!board[y][x]) {
+      return y;
     }
   }
-  return y;
+  return null;
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
 
 function placeInTable(y, x) {
-  // [DONE!!!]TODO: make a div and insert into correct table cell
-  const td = document.getElementById(`${y}-${x}`);
-  const placeDiv = document.createElement('div');
-  placeDiv.classList.add('piece');
+  const piece = document.createElement('div');
+  piece.classList.add('piece');
+  piece.classList.add(`p${currPlayer}`);
+  piece.style.top = -50 * (y + 2);
 
-  if (currPlayer === 1) {
-    placeDiv.classList.add('p1');
-  } else if (currPlayer === 2) {
-    placeDiv.classList.add('p2');
-  }
-
-  td.append(placeDiv);
+  const spot = document.getElementById(`${y}-${x}`);
+  spot.append(piece);
 }
 
 /** endGame: announce game end */
 
 function endGame(msg) {
-  //[DONE!!!]TODO: pop up alert message
-  setTimeout(function () {
-    alert(msg);
-  }, 1);
-  gameEnded = true;
+  alert(msg);
 }
 
 /** handleClick: handle click of column top to play piece */
 
 function handleClick(evt) {
-  if (!gameEnded) {
-    // get x from ID of clicked cell
-    let x = +evt.target.id;
-    // get next spot in column (if none, ignore click)
-    let y = findSpotForCol(x);
-    if (y === null) {
-      return;
-    }
-    // place piece in board and add to HTML table
-    // [DONE!!!]TODO: add line to update in-memory board
-    placeInTable(y, x);
-    board[y][x] = currPlayer;
-    // check for win
-    if (checkForWin()) {
-      return endGame(`Player ${currPlayer} won!`);
-    }
+  // get x from ID of clicked cell
+  const x = +evt.target.id;
 
-    // check for tie
-    //[DONE!!!]TODO: check if all cells in board are filled; if so call, call endGame
-    function boardFilled(board) {
-      return board.every(function (val, index) {
-        return val[index] !== null;
-      });
-    }
-    if (boardFilled(board)) {
-      endGame(`It's a tie`);
-    }
-    // switch players
-    // [DONE!!!]TODO: switch currPlayer 1 <-> 2
-    currPlayer = currPlayer === 1 ? 2 : 1;
+  // get next spot in column (if none, ignore click)
+  const y = findSpotForCol(x);
+  if (y === null) {
+    return;
   }
+
+  // place piece in board and add to HTML table
+  board[y][x] = currPlayer;
+  placeInTable(y, x);
+
+  // check for win
+  if (checkForWin()) {
+    return endGame(`Player ${currPlayer} won!`);
+  }
+
+  // check for tie
+  if (board.every((row) => row.every((cell) => cell))) {
+    return endGame('Tie!');
+  }
+
+  // switch players
+  currPlayer = currPlayer === 1 ? 2 : 1;
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
@@ -160,10 +130,10 @@ function checkForWin() {
     );
   }
 
-  // TODO: read and understand this code. Add comments to help you.
-
   for (let y = 0; y < HEIGHT; y++) {
     for (let x = 0; x < WIDTH; x++) {
+      // get "check list" of 4 cells (starting here) for each of the different
+      // ways to win
       const horiz = [
         [y, x],
         [y, x + 1],
@@ -189,6 +159,7 @@ function checkForWin() {
         [y + 3, x - 3],
       ];
 
+      // find winner (only checking each win-possibility as needed)
       if (_win(horiz) || _win(vert) || _win(diagDR) || _win(diagDL)) {
         return true;
       }
@@ -196,14 +167,5 @@ function checkForWin() {
   }
 }
 
-// BUTTON
-function addReplayButton() {
-  const btn = document.querySelector('#button');
-  btn.addEventListener('click', function (e) {
-    window.location.reload();
-  });
-}
-
 makeBoard();
 makeHtmlBoard();
-addReplayButton();
