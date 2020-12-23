@@ -161,4 +161,12 @@ class Game {
   }
 }
 
-new Game(6, 7);
+let p1 = {
+  color: 'red',
+};
+
+let p2 = {
+  color: 'blue',
+};
+
+new Game(6, 7, p1, p2);
