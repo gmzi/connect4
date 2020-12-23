@@ -3,7 +3,7 @@ class Game {
     this.HEIGHT = height;
     this.WIDTH = width;
     this.players = [p1, p2];
-    this.currplayer = p1;
+    this.currPlayer = p1;
     this.gameOver = false;
     this.makeboard();
     this.makeHtmlBoard();
@@ -62,7 +62,7 @@ class Game {
   placeInTable(y, x) {
     const piece = document.createElement('div');
     piece.classList.add('piece');
-    piece.classList.add(`p${this.currPlayer}`);
+    piece.classList.add(`${this.currPlayer}`);
     piece.style.backgroundColor = this.currPlayer.color;
     piece.style.top = -50 * (y + 2);
 
@@ -161,12 +161,14 @@ class Game {
   }
 }
 
-let p1 = {
-  color: 'red',
-};
+class Player {
+  constructor(color) {
+    this.color = color;
+  }
+}
 
-let p2 = {
-  color: 'blue',
-};
-
-new Game(6, 7, p1, p2);
+document.getElementById('start-game').addEventListener('click', () => {
+  let p1 = new Player(document.getElementById('p1-color').value);
+  let p2 = new Player(document.getElementById('p2-color').value);
+  new Game(p1, p2);
+});
